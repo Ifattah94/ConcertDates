@@ -22,15 +22,14 @@ class ViewController: UIViewController, UITableViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        concertTableView.dataSource = self
+        loadData()
         
     }
     
     private func loadData() {
         ConcertAPIHelper.shared.getConcerts { (result) in
             DispatchQueue.main.async {
-                
-                
                 switch result {
                 case .success(let concertsFromOnline):
                     self.concerts = concertsFromOnline
@@ -49,7 +48,8 @@ class ViewController: UIViewController, UITableViewDataSource {
         let cell = concertTableView.dequeueReusableCell(withIdentifier: "concertCell", for: indexPath)
         let concert = concerts[indexPath.row]
         cell.textLabel?.text = concert.title
-        cell.detailTextLabel?.text = concert.dateTimeLocal
+        let properDate = concert.cleanUpDate()
+        cell.detailTextLabel?.text = "\(properDate.date) \(properDate.time)"
         return cell
     }
 
